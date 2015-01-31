@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"strconv"
 	"time"
@@ -80,11 +81,11 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	errs := common.CheckUnusedConfig(md)
 
 	if b.config.AccountURL == "" {
-		b.config.AccountURL = getenvDefault("ONLINELABS_ACCOUNT_URL", AccountURL)
+		b.config.AccountURL = getenvDefault("ONLINELABS_ACCOUNT_URL", AccountURL.String())
 	}
 
 	if b.config.APIURL == "" {
-		b.config.APIURL = getenvDefault("ONLINELABS_API_URL", APIURL)
+		b.config.APIURL = getenvDefault("ONLINELABS_API_URL", APIURL.String())
 	}
 
 	if b.config.APIToken == "" {
@@ -189,7 +190,15 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 }
 
 func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packer.Artifact, error) {
-	client := NewClient(b.config.APIToken, b.config.OrganizationID)
+	accountURL := AccountURL
+	apiURL := APIURL
+	if u, err := url.Parse(b.config.AccountURL); err == nil {
+		accountURL = u
+	}
+	if u, err := url.Parse(b.config.APIURL); err == nil {
+		apiURL = u
+	}
+	client := NewClient(b.config.APIToken, b.config.OrganizationID, accountURL, apiURL)
 
 	state := &multistep.BasicStateBag{}
 	state.Put("config", b.config)
@@ -200,6 +209,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 	steps := []multistep.Step{
 		// TODO: &stepCreateSSHKey{},
 		&stepCreateServer{},
+		&stepStartServer{},
 		&stepServerInfo{},
 		&common.StepConnectSSH{
 			SSHAddress:     sshAddress,
