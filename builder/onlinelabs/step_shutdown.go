@@ -3,7 +3,6 @@ package onlinelabs
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/mitchellh/multistep"
 	"github.com/mitchellh/packer/packer"
@@ -15,6 +14,7 @@ func (s *stepShutdown) Run(state multistep.StateBag) multistep.StepAction {
 	comm := state.Get("comm").(packer.Communicator)
 	ui := state.Get("ui").(packer.Ui)
 	serverID := state.Get("server_id").(string)
+	c := state.Get("config").(*config)
 	client := state.Get("client").(ClientInterface)
 
 	ui.Say("Gracefully shutting down server...")
@@ -37,7 +37,7 @@ func (s *stepShutdown) Run(state multistep.StateBag) multistep.StepAction {
 		return multistep.ActionHalt
 	}
 
-	err := waitForServerState("stopped", serverID, client, 2*time.Minute)
+	err := waitForServerState("stopped", serverID, client, c.stateTimeout)
 	if err != nil {
 		log.Printf("Error waiting for graceful off: %s", err)
 	}

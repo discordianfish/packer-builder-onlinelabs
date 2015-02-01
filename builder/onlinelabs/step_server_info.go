@@ -40,7 +40,7 @@ func (s *stepServerInfo) Run(state multistep.StateBag) multistep.StepAction {
 		return multistep.ActionHalt
 	}
 
-	state.Put("server_ip", server.PublicIP.String())
+	state.Put("server_ip", server.PublicIP.Address)
 
 	return multistep.ActionContinue
 }

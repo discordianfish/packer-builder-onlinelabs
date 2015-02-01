@@ -8,7 +8,7 @@ type Server struct {
 	Name            string             `json:"name"`
 	Organization    string             `json:"organization"`
 	PrivateIP       *NullString        `json:"private_ip"`
-	PublicIP        *NullString        `json:"public_ip"`
+	PublicIP        *IPAddress         `json:"public_ip"`
 	State           string             `json:"state"`
 	Tags            []string           `json:"tags"`
 	Volumes         map[string]*Volume `json:"volumes"`
@@ -82,6 +82,12 @@ type Initrd struct {
 type BootCmdArgs struct {
 	ID    string `json:"id"`
 	Value string `json:"value"`
+}
+
+type IPAddress struct {
+	Dynamic bool   `json:"dynamic"`
+	ID      string `json:"id"`
+	Address string `json:"address"`
 }
 
 type createServerParams struct {
