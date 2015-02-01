@@ -24,7 +24,7 @@ func (s *stepPowerOff) Run(state multistep.StateBag) multistep.StepAction {
 		return multistep.ActionHalt
 	}
 
-	if !server.Running {
+	if server.State == "stopped" {
 		return multistep.ActionContinue
 	}
 
@@ -38,7 +38,7 @@ func (s *stepPowerOff) Run(state multistep.StateBag) multistep.StepAction {
 	}
 
 	log.Println("Waiting for poweroff event to complete...")
-	err = waitForServerState("down", serverID, client, c.stateTimeout)
+	err = waitForServerState("stopped", serverID, client, c.stateTimeout)
 	if err != nil {
 		state.Put("error", err)
 		ui.Error(err.Error())

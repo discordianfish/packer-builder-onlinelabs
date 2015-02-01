@@ -17,7 +17,7 @@ func (s *stepServerInfo) Run(state multistep.StateBag) multistep.StepAction {
 
 	ui.Say("Waiting for server to become active...")
 
-	err := waitForServerState("up", serverID, client, c.stateTimeout)
+	err := waitForServerState("running", serverID, client, c.stateTimeout)
 	if err != nil {
 		err := fmt.Errorf("Error waiting for server to become active: %s", err)
 		state.Put("error", err)
@@ -33,7 +33,14 @@ func (s *stepServerInfo) Run(state multistep.StateBag) multistep.StepAction {
 		return multistep.ActionHalt
 	}
 
-	state.Put("server_ip", server.PublicIP)
+	if server.PublicIP == nil {
+		err := fmt.Errorf("Error getting server public IP%s: %s", serverID, err)
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
+
+	state.Put("server_ip", server.PublicIP.String())
 
 	return multistep.ActionContinue
 }

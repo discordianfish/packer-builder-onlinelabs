@@ -37,7 +37,7 @@ func (s *stepShutdown) Run(state multistep.StateBag) multistep.StepAction {
 		return multistep.ActionHalt
 	}
 
-	err := waitForServerState("down", serverID, client, 2*time.Minute)
+	err := waitForServerState("stopped", serverID, client, 2*time.Minute)
 	if err != nil {
 		log.Printf("Error waiting for graceful off: %s", err)
 	}

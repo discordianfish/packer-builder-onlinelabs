@@ -19,7 +19,7 @@ const (
 	"organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
 	"private_ip": null,
 	"public_ip": null,
-	"running": false,
+	"state": "running",
 	"tags": [
 	 "test",
 	 "www"
@@ -90,8 +90,8 @@ func TestServerSerialization(t *testing.T) {
 		t.Fatal("PublicIP != nil")
 	}
 
-	if srv.Running != false {
-		t.Fatal("Running != false")
+	if srv.State != "running" {
+		t.Fatal("State != running")
 	}
 
 	if len(srv.Tags) != 2 {

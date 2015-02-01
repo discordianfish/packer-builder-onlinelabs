@@ -11,12 +11,6 @@ var (
 )
 
 func waitForServerState(desiredState, serverID string, client ClientInterface, timeout time.Duration) error {
-	if desiredState != "up" && desiredState != "down" {
-		return errInvalidServerState
-	}
-
-	wantRunning := desiredState == "up"
-
 	done := make(chan struct{})
 	defer close(done)
 
@@ -33,7 +27,7 @@ func waitForServerState(desiredState, serverID string, client ClientInterface, t
 				return
 			}
 
-			if server.Running == wantRunning {
+			if server.State == desiredState {
 				result <- nil
 				return
 			}

@@ -9,7 +9,7 @@ type Server struct {
 	Organization    string             `json:"organization"`
 	PrivateIP       *NullString        `json:"private_ip"`
 	PublicIP        *NullString        `json:"public_ip"`
-	Running         bool               `json:"running"`
+	State           string             `json:"state"`
 	Tags            []string           `json:"tags"`
 	Volumes         map[string]*Volume `json:"volumes"`
 }
