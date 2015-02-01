@@ -111,6 +111,16 @@ func (c *Client) GetServer(id string) (*Server, error) {
 }
 
 func (c *Client) DestroyServer(id string) error {
+	path := fmt.Sprintf("/servers/%s", id)
+	resp, err := NewAPIRequest(c, "DELETE", path, nil)
+
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode >= 300 {
+		return errFromResponse("fetching server failed", resp)
+	}
+
 	return nil
 }
 
