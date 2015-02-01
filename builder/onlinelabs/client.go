@@ -196,6 +196,17 @@ func (c *Client) CreateImage(org, name, arch, rootVolume string) (*Image, error)
 }
 
 func (c *Client) DestroyImage(id string) error {
+	path := fmt.Sprintf("/images/%s", id)
+
+	resp, err := NewAPIRequest(c, "DELETE", path, nil)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode >= 300 {
+		return errFromResponse("image destruction failed", resp)
+	}
+
 	return nil
 }
 
