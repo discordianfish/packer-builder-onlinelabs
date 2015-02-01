@@ -104,6 +104,13 @@ type createSnapshotParams struct {
 	VolumeID     string `json:"volume_id"`
 }
 
+type createImageParams struct {
+	Organization string `json:"organization"`
+	Name         string `json:"name"`
+	Arch         string `json:"arch"`
+	RootVolume   string `json:"root_volume"`
+}
+
 type NullString struct {
 	Value string
 }

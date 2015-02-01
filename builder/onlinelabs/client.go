@@ -170,7 +170,29 @@ func (c *Client) CreateSnapshot(name, org, volumeID string) (*Snapshot, error) {
 }
 
 func (c *Client) CreateImage(org, name, arch, rootVolume string) (*Image, error) {
-	return nil, nil
+	body := &createImageParams{
+		Organization: org,
+		Name:         name,
+		Arch:         arch,
+		RootVolume:   rootVolume,
+	}
+
+	resp, err := NewAPIRequest(c, "POST", "/images", body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode >= 300 {
+		return nil, errFromResponse("image creation failed", resp)
+	}
+
+	imgBody := map[string]*Image{"image": &Image{}}
+	err = json.NewDecoder(resp.Body).Decode(&imgBody)
+	if err != nil {
+		return nil, err
+	}
+
+	return imgBody["image"], nil
 }
 
 func (c *Client) DestroyImage(id string) error {
