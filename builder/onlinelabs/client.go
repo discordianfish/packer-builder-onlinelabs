@@ -145,7 +145,28 @@ func (c *Client) sendAction(id, action string) error {
 }
 
 func (c *Client) CreateSnapshot(name, org, volumeID string) (*Snapshot, error) {
-	return nil, nil
+	body := &createSnapshotParams{
+		Name:         name,
+		Organization: org,
+		VolumeID:     volumeID,
+	}
+
+	resp, err := NewAPIRequest(c, "POST", "/snapshots", body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode >= 300 {
+		return nil, errFromResponse("server creation failed", resp)
+	}
+
+	snBody := map[string]*Snapshot{"snapshot": &Snapshot{}}
+	err = json.NewDecoder(resp.Body).Decode(&snBody)
+	if err != nil {
+		return nil, err
+	}
+
+	return snBody["snapshot"], nil
 }
 
 func (c *Client) CreateImage(org, name, arch, rootVolume string) (*Image, error) {

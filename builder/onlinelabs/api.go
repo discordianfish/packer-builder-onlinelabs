@@ -98,6 +98,12 @@ type createServerParams struct {
 	Volumes      map[string]*Volume `json:"volumes"`
 }
 
+type createSnapshotParams struct {
+	Organization string `json:"organization"`
+	Name         string `json:"name"`
+	VolumeID     string `json:"volume_id"`
+}
+
 type NullString struct {
 	Value string
 }
